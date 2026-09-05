@@ -14,8 +14,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # 编译安装 RTKLIB 的 convbin 工具
-RUN git clone https://github.com/tomojitakasu/RTKLIB.git /tmp/rtklib \
-    && cd /tmp/rtklib/app/consapp/convbin/gcc \
+# 注意：最新 RTKLIB 的 convbin 源代码位于 app/consapp/convbin 目录，不再是 convbin/gcc
+RUN git clone --depth 1 https://github.com/tomojitakasu/RTKLIB.git /tmp/rtklib \
+    && cd /tmp/rtklib/app/consapp/convbin \
     && make \
     && cp convbin /usr/local/bin/ \
     && rm -rf /tmp/rtklib
