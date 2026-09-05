@@ -4,22 +4,25 @@ FROM python:3.11-slim
 # 设置工作目录
 WORKDIR /app
 
-# 安装系统依赖：gcc, make, gzip, wget, git 等
+# 安装系统依赖：gcc, make, gzip, wget, libc6-dev 等
+# libc6-dev 提供编译 C 程序所需的标准头文件和库
 RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc \
     make \
     gzip \
     wget \
-    git \
+    libc6-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# 编译安装 RTKLIB 的 convbin 工具
-# 注意：最新 RTKLIB 的 convbin 源代码位于 app/consapp/convbin 目录，不再是 convbin/gcc
-RUN git clone --depth 1 https://github.com/tomojitakasu/RTKLIB.git /tmp/rtklib \
-    && cd /tmp/rtklib/app/consapp/convbin \
+# 将本地 RTKLIB 源码包复制到镜像内
+COPY rtklib_2.4.3+dfsg1.orig.tar.gz /tmp/rtklib.tar.gz
+
+# 解压并编译 convbin 工具（路径为 app/convbin/gcc）
+RUN tar -xzf /tmp/rtklib.tar.gz -C /tmp/ \
+    && cd /tmp/rtklib-*/app/convbin/gcc \
     && make \
     && cp convbin /usr/local/bin/ \
-    && rm -rf /tmp/rtklib
+    && rm -rf /tmp/rtklib* /tmp/rtklib.tar.gz
 
 # 安装 Python 依赖
 COPY requirements.txt .
