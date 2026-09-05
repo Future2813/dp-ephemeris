@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>广播星历下载服务</title>
+</head>
+<body>
+    <h1>广播星历下载服务状态</h1>
+    {% if status %}
+        <p>最近运行时间: {{ status.time }}</p>
+        <p>成功: {{ status.success }}</p>
+        {% if status.source %}
+            <p>数据源: {{ status.source }}</p>
+        {% endif %}
+        <p>输出文件: {{ status.output }}</p>
+    {% else %}
+        <p>尚未运行</p>
+    {% endif %}
+    <form action="/trigger" method="post">
+        <button type="submit">手动触发下载</button>
+    </form>
+    <hr>
+    <h2>当前配置</h2>
+    <ul>
+        <li>数据源优先级: {{ config.SOURCE_PRIORITY|join(', ') }}</li>
+        <li>自动降级: {{ config.AUTO_DOWNGRADE }}</li>
+    </ul>
+</body>
+</html>
